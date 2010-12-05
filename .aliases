@@ -1,0 +1,47 @@
+
+alias vim="gvim -v"
+
+alias keyon="ssh-add -t 12h"
+alias keyoff='ssh-add -D'
+alias keylist='ssh-add -l'
+
+alias lock='xscreensaver-command -lock'
+alias asdf='setxkbmap dvorak'
+alias aoeu='setxkbmap us'
+alias gitk='gitk &'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+alias ls="ls -F --color"
+alias la="ls -A"
+alias ll="ls -hl"
+alias lla="ll -A"
+
+function l. {
+    local olddir oldold
+    olddir=${PWD}
+    oldold=${OLDPWD}
+    if [[ -n "${1}" ]]; then
+        cd "${1}"
+    fi
+        ls -d .*
+    if [[ -n "${1}" ]]; then
+        cd "${olddir}"
+        export OLDPWD="${oldold}"
+    fi
+}
+ 
+function ll. {
+    local olddir oldold
+    olddir=${PWD}
+    oldold=${OLDPWD}
+    if [[ -n "${1}" ]]; then
+        cd "${1}"
+    fi
+        ls -dhl .*
+    if [[ -n "${1}" ]]; then
+        cd "${olddir}"
+        export OLDPWD="${oldold}"
+    fi
+}
