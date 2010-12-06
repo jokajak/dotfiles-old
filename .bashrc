@@ -273,11 +273,49 @@ else
     None=""
     # }}}
 fi
-#}}}2
-PS1="$RED[$NO_COLOR\t$RED][$NO_COLOR\$(cut -d' ' -f1 /proc/loadavg)$RED][$LIGHT_GREEN\$(jobs -s | wc -l | sed -e \"s/ //g\")$NO_COLOR/$LIGHT_GREEN\j$RED][$GREEN\u$NO_COLOR@\h $LIGHT_RED\W$RED]\$ $NO_COLOR"
-PS2='> '
-PS4='+ '
 
+RED="\[\033[0;31m\]"
+BROWN="\[\033[0;33m\]"
+GREY="\[\033[0;97m\]"
+BLUE="\[\033[0;34m\]"
+PS_CLEAR="\[\033[0m\]"
+SCREEN_ESC="\[\033k\033\134\]"
+
+if [ "$LOGNAME" = "root" ]; then
+    USERCOLOR="${RED}"
+    P="#"
+elif hostname | grep -q 'github\.com'; then
+    GITHUB=yep
+    COLOR1="\[\e[0;94m\]"
+    COLOR2="\[\e[0;92m\]"
+    P="\$"
+else
+    USERCOLOR="${GREEN}"
+    P="\$"
+fi
+
+prompt_simple() {
+    unset PROMPT_COMMAND
+    PS1="[\u@\h:\w]\$ "
+    PS2="> "
+}
+
+prompt_compact() {
+    unset PROMPT_COMMAND
+    PS1="${COLOR1}${P}${PS_CLEAR} "
+    PS2="> "
+}
+
+prompt_color() {
+    PS1="$RED[$NO_COLOR\t$RED][$NO_COLOR\$(cut -d' ' -f1 /proc/loadavg)$RED][$GREEN\$(jobs -s | wc -l | sed -e \"s/ //g\")$NO_COLOR/$GREEN\j$RED][$USERCOLOR\u$NO_COLOR@\h $LIGHT_RED\W$RED]$P${PS_CLEAR} "
+    #PS2='> '
+    PS4='+ '
+    #PS1="${GREY}[${COLOR1}\u${GREY}@${COLOR2}\h${GREY}:${COLOR1}\W${GREY}]${COLOR2}$P${PS_CLEAR} "
+    PS2="\[[33;1m\]continue \[[0m[1m]> "
+}
+
+prompt_color
+#}}}2
 
 # ----------------------------------------------------------------------
 # LS AND DIRCOLORS
@@ -319,6 +357,7 @@ if [[ -f "/etc/bash_completion" ]]; then
     source "/etc/bash_completion"
 fi
 
+# 1}}}
 
 # --------------------------------------------------------------------
 # MISC COMMANDS
@@ -334,6 +373,10 @@ push_ssh_cert() {
         ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_dsa.pub
     done
 }
+
+# Use the color prompt by default when interactive
+test -n "$PS1" &&
+prompt_color
 
 # -------------------------------------------------------------------
 # MOTD / FORTUNE
