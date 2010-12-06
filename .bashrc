@@ -1,0 +1,347 @@
+# .bashrc -x
+
+# If not running interactively, don't do anything
+# Important for ssh+svn support
+if [[ -z "${PS1}" ]]; then
+    return
+fi
+
+# complete hostnames from known hosts
+: ${HOSTFILE=~/.ssh/known_hosts}
+
+if [ -d /cgroup -a -d /cgroup/cpu ]; then
+    mkdir -m 0700 /cgroup/cpu/user/$$
+    echo $$ > /cgroup/cpu/user/$$/tasks
+fi
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+if [ -f ${HOME}/.shell-fu.bashrc ]; then
+    . ${HOME}/.shell-fu.bashrc
+fi
+
+# --------------------------------------------------------------------------------
+# SHELL OPTIONS
+# --------------------------------------------------------------------------------
+
+# notify of background completion immediately
+set -o notify
+
+# use vi mode
+set -o vi
+
+# correct minor mispellings in directory names when cd'ing
+shopt -s cdspell >/dev/null 2>&1
+
+# extend pattern matching
+shopt -s extglob >/dev/null 2>&1
+
+# always append to history
+shopt -s histappend >/dev/null 2>&1
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+shopt -s histreedit
+shopt -s histverify
+HISTFILESIZE=5000
+HISTSIZE=5000
+export HISTFILESIZE HISTSIZE
+
+# don't put duplicate lines in the history. See bash(1) for more options
+export HISTCONTROL=ignoredups
+
+# autocomplete hostnames when @ is present
+shopt -s hostcomplete >/dev/null 2>&1
+
+# keep lines starting with # as comments
+shopt -s interactive_comments >/dev/null 2>&1
+
+# don't expand commands when the command line is empty
+shopt -s no_empty_cmd_completion >/dev/null 2>&1
+
+# when saving history with multi-line commands, save \n instead of ;
+shopt -s lithist >/dev/null 2>&1
+
+# disable core dumps
+ulimit -S -c 0
+
+# default umask
+umask 0022
+
+# put ~/bin in path if it exists
+test -d "$HOME/bin" && PATH=$PATH:$HOME/bin
+
+# ----------------------------------------------------------------------
+# ENVIRONMENT CONFIGURATION
+# ----------------------------------------------------------------------
+
+# detect interactive shell
+case "$-" in
+    *i*) INTERACTIVE=yes ;;
+    *)   unset INTERACTIVE ;;
+esac
+
+# detect login shell
+case "$0" in
+    -*) LOGIN=yes ;;
+    *)  unset LOGIN ;;
+esac
+
+# enable en_US locale w/ utf-8 encodings if not already configured
+: ${LANG:="en_US.UTF-8"}
+: ${LANGUAGE:="en"}
+: ${LC_CTYPE:="en_US.UTF-8"}
+: ${LC_ALL:="en_US.UTF-8"}
+export LANG LANGUAGE LC_CTYPE LC_ALL
+
+# always use PASSIVE mode ftp
+: ${FTP_PASSIVE:=1}
+export FTP_PASSIVE
+
+# ignore backups, CVS directories, python bytecode, vim swap files, svn directories
+FIGNORE="~:CVS:#:.pyc:.swp:.swa:apache-solr-*:.svn"
+HISTCONTROL=ignoreboth
+
+# --------------------------------------------------------------------------------
+# PAGER / EDITOR
+# --------------------------------------------------------------------------------
+
+# See what we have to work with ...
+HAVE_VIM=$(command -v vim)
+HAVE_GVIM=$(command -v gvim)
+
+# EDITOR
+test -n "$HAVE_VIM" &&
+EDITOR=vim ||
+EDITOR=vi
+export EDITOR
+
+# PAGER
+if test -n "$(command -v less)" ; then
+    PAGER="less -FirSwX"
+    MANPAGER="less -FiRswX"
+else
+    PAGER=more
+    MANPAGER="$PAGER"
+fi
+export PAGER MANPAGER
+
+# Ack
+ACK_PAGER="$PAGER"
+
+# ^p check for partial match in history
+bind -m vi-insert "\C-p":dynamic-complete-history
+
+# ^n cycle through the list of partial matches
+bind -m vi-insert "\C-n":menu-complete       
+# ^l clear screen
+bind -m vi-insert "\C-l":clear-screen
+
+[ -z "$SSH_CLIENT" -a -f $HOME/.ssh-agent ] && . $HOME/.ssh-agent
+
+# --------------------------------------------------------------------------------
+# PROMPT
+# --------------------------------------------------------------------------------
+
+NO_COLOR="\[\033[0m\]"
+BLUE="\[\033[0;34m\]"
+LIGHT_GRAY="\[\033[0;37m\]"
+DARK_GRAY="\[\033[1;30m\]"
+LIGHT_GREEN="\[\033[1;32m\]"
+GREEN="\[\033[32m\]"
+LIGHT_BLUE="\[\033[1;34m\]"
+BLUE="\[\033[34m\]"
+LIGHT_CYAN="\[\033[1;36m\]"
+YELLOW="\[\033[1;33m\]"
+WHITE="\[\033[1;37m\]"
+RED="\[\033[0;31m\]"
+# Set a fancy prompt {{{1
+# Color definitions {{{2
+if [[ -x /usr/bin/tput ]]; then
+    COLORS=$(tput colors)
+    None="\[$(tput sgr0)\]"
+    if (( ${COLORS} >= 16 )); then
+        # For 16+ color term {{{
+        Black="\[$(tput setaf 0)\]"
+        DarkGray="\[$(tput setaf 8)\]"
+        LightGray="\[$(tput setaf 7)\]"
+        White="\[$(tput setaf 15)\]"
+        Red="\[$(tput setaf 9)\]"
+        DarkRed="\[$(tput setaf 1)\]"
+        Green="\[$(tput setaf 10)\]"
+        DarkGreen="\[$(tput setaf 2)\]"
+        Yellow="\[$(tput setaf 11)\]"
+        DarkYellow="\[$(tput setaf 3)\]"
+        Blue="\[$(tput setaf 12)\]"
+        DarkBlue="\[$(tput setaf 4)\]"
+        Magenta="\[$(tput setaf 13)\]"
+        DarkMagenta="\[$(tput setaf 5)\]"
+        Cyan="\[$(tput setaf 14)\]"
+        DarkCyan="\[$(tput setaf 6)\]"
+        BlackBg="\[$(tput setab 0)\]"
+        DarkGrayBg="\[$(tput setab 8)\]"
+        LightGrayBg="\[$(tput setab 7)\]"
+        WhiteBg="\[$(tput setab 15)\]"
+        RedBg="\[$(tput setab 9)\]"
+        DarkRedBg="\[$(tput setab 1)\]"
+        GreenBg="\[$(tput setab 10)\]"
+        DarkGreenBg="\[$(tput setab 2)\]"
+        YellowBg="\[$(tput setab 11)\]"
+        DarkYellowBg="\[$(tput setab 3)\]"
+        BlueBg="\[$(tput setab 12)\]"
+        DarkBlueBg="\[$(tput setab 4)\]"
+        MagentaBg="\[$(tput setab 13)\]"
+        DarkMagentaBg="\[$(tput setab 5)\]"
+        CyanBg="\[$(tput setab 14)\]"
+        DarkCyanBg="\[$(tput setab 6)\]"
+        # }}}
+    elif (( ${COLORS} == 8 )); then
+        # For 8 color term {{{
+        Black="\[$(tput setaf 0)\]"
+        DarkGray="\[$(tput setaf 0;tput bold)\]"
+        LightGray="\[$(tput setaf 7)\]"
+        White="\[$(tput setaf 7;tput bold)\]"
+        Red="\[$(tput setaf 1;tput bold)\]"
+        DarkRed="\[$(tput setaf 1)\]"
+        Green="\[$(tput setaf 2;tput bold)\]"
+        DarkGreen="\[$(tput setaf 2)\]"
+        Yellow="\[$(tput setaf 3;tput bold)\]"
+        DarkYellow="\[$(tput setaf 3)\]"
+        Blue="\[$(tput setaf 4;tput bold)\]"
+        DarkBlue="\[$(tput setaf 4)\]"
+        Magenta="\[$(tput setaf 5;tput bold)\]"
+        DarkMagenta="\[$(tput setaf 5)\]"
+        Cyan="\[$(tput setaf 6;tput bold)\]"
+        DarkCyan="\[$(tput setaf 6)\]"
+        BlackBg="\[$(tput setab 0)\]"
+        DarkGrayBg="\[$(tput setab 0;tput blink)\]"
+        LightGrayBg="\[$(tput setab 7)\]"
+        WhiteBg="\[$(tput setab 7;tput blink)\]"
+        RedBg="\[$(tput setab 1;tput blink)\]"
+        DarkRedBg="\[$(tput setab 1)\]"
+        GreenBg="\[$(tput setab 2;tput blink)\]"
+        DarkGreenBg="\[$(tput setab 2)\]"
+        YellowBg="\[$(tput setab 3;tput blink)\]"
+        DarkYellowBg="\[$(tput setab 3)\]"
+        BlueBg="\[$(tput setab 4;tput blink)\]"
+        DarkBlueBg="\[$(tput setab 4)\]"
+        MagentaBg="\[$(tput setab 5;tput blink)\]"
+        DarkMagentaBg="\[$(tput setab 5)\]"
+        CyanBg="\[$(tput setab 6;tput blink)\]"
+        DarkCyanBg="\[$(tput setab 6)\]"
+        # }}}
+    fi
+else
+    # {{{
+    Black=""
+    DarkGray=""
+    LightGray=""
+    White=""
+    Red=""
+    DarkRed=""
+    Green=""
+    DarkGreen=""
+    Yellow=""
+    DarkYellow=""
+    Blue=""
+    DarkBlue=""
+    Magenta=""
+    DarkMagenta=""
+    Cyan=""
+    DarkCyan=""
+    BlackBg=""
+    DarkGrayBg=""
+    LightGrayBg=""
+    WhiteBg=""
+    RedBg=""
+    DarkRedBg=""
+    GreenBg=""
+    DarkGreenBg=""
+    YellowBg=""
+    DarkYellowBg=""
+    BlueBg=""
+    DarkBlueBg=""
+    MagentaBg=""
+    DarkMagentaBg=""
+    CyanBg=""
+    DarkCyanBg=""
+    None=""
+    # }}}
+fi
+#}}}2
+PS1="$RED[$NO_COLOR\t$RED][$NO_COLOR\$(cut -d' ' -f1 /proc/loadavg)$RED][$LIGHT_GREEN\$(jobs -s | wc -l | sed -e \"s/ //g\")$NO_COLOR/$LIGHT_GREEN\j$RED][$GREEN\u$NO_COLOR@\h $LIGHT_RED\W$RED]\$ $NO_COLOR"
+PS2='> '
+PS4='+ '
+
+
+# ----------------------------------------------------------------------
+# LS AND DIRCOLORS
+# ----------------------------------------------------------------------
+
+# we always pass these to ls(1)
+LS_COMMON="-hBG"
+
+# if the dircolors utility is available, set that up to
+dircolors="$(type -P gdircolors dircolors | head -1)"
+test -n "$dircolors" && {
+    COLORS=/etc/DIR_COLORS
+    test -e "/etc/DIR_COLORS.$TERM"   && COLORS="/etc/DIR_COLORS.$TERM"
+    test -e "$HOME/.dircolors"        && COLORS="$HOME/.dircolors"
+    test ! -e "$COLORS"               && COLORS=
+    eval `$dircolors --sh $COLORS`
+}
+unset dircolors
+
+# setup the main ls alias if we've established common args
+test -n "$LS_COMMON" &&
+alias ls="command ls $LS_COMMON"
+
+# these use the ls aliases above
+alias ll="ls -l"
+alias l.="ls -d .*"
+
+# Load other configurations {{{1
+if [[ -f "${HOME}/.aliases" ]]; then
+    source "${HOME}/.aliases"
+fi
+
+if [[ -f "${HOME}/.bash_functions" ]]; then
+    source "${HOME}/.bash_functions"
+fi
+
+# enable programmable completion features
+if [[ -f "/etc/bash_completion" ]]; then
+    source "/etc/bash_completion"
+fi
+
+
+# --------------------------------------------------------------------
+# MISC COMMANDS
+# --------------------------------------------------------------------
+
+# push SSH public key to another box
+push_ssh_cert() {
+    local _host
+    test -f ~/.ssh/id_rsa.pub || ssh-keygen -t rsa -b 8192
+    for _host in "$@";
+    do
+        echo $_host
+        ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_dsa.pub
+    done
+}
+
+# -------------------------------------------------------------------
+# MOTD / FORTUNE
+# -------------------------------------------------------------------
+
+test -n "$INTERACTIVE" -a -n "$LOGIN" && {
+    uname -npsr
+    uptime
+}
+
+# vim: ts=4 sts=4 shiftwidth=4 expandtab
