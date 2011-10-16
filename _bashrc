@@ -15,11 +15,11 @@ if [ -d /cgroup -a -d /cgroup/cpu ]; then
 fi
 
 # Source global definitions
-if [ -f /etc/bashrc ]; then
+if [ -r /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-if [ -f ${HOME}/.shell-fu.bashrc ]; then
+if [ -r ${HOME}/.shell-fu.bashrc ]; then
     . ${HOME}/.shell-fu.bashrc
 fi
 
@@ -344,19 +344,22 @@ alias ll="ls -l"
 alias l.="ls -d .*"
 
 # Load other configurations {{{1
-if [[ -f "${HOME}/.aliases" ]]; then
+if [[ -r "${HOME}/.bashrc-local" ]]; then
+    source "${HOME}/.bashrc-local"
+fi
+
+if [[ -r "${HOME}/.aliases" ]]; then
     source "${HOME}/.aliases"
 fi
 
-if [[ -f "${HOME}/.bash_functions" ]]; then
+if [[ -r "${HOME}/.bash_functions" ]]; then
     source "${HOME}/.bash_functions"
 fi
 
 # enable programmable completion features
-if [[ -f "/etc/bash_completion" ]]; then
+if [[ -r "/etc/bash_completion" ]]; then
     source "/etc/bash_completion"
 fi
-
 # 1}}}
 
 # --------------------------------------------------------------------
