@@ -88,7 +88,7 @@ btd(){
 
 
 # create a terminal calculator - http://www.shell-fu.org/lister.php?id=216
-calc(){ echo "${1}"|bc -l; }
+#calc(){ echo "${1}"|bc -l; }
 
 
 # copy and paste from the command line - http://www.shell-fu.org/lister.php?id=177

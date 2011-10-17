@@ -33,19 +33,27 @@ set -o notify
 # use vi mode
 set -o vi
 
+# ^p check for partial match in history
+bind -m vi-insert "\C-p":dynamic-complete-history
+
+# ^n cycle through the list of partial matches
+bind -m vi-insert "\C-n":menu-complete       
+# ^l clear screen
+bind -m vi-insert "\C-l":clear-screen
+
+[ -z "$SSH_CLIENT" -a -f $HOME/.ssh-agent ] && . $HOME/.ssh-agent
+
 # correct minor mispellings in directory names when cd'ing
 shopt -s cdspell >/dev/null 2>&1
 
 # extend pattern matching
 shopt -s extglob >/dev/null 2>&1
 
-# always append to history
-shopt -s histappend >/dev/null 2>&1
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+shopt -s histappend >/dev/null 2>&1
 shopt -s histreedit
 shopt -s histverify
 HISTFILESIZE=5000
@@ -134,15 +142,6 @@ export PAGER MANPAGER
 # Ack
 ACK_PAGER="$PAGER"
 
-# ^p check for partial match in history
-bind -m vi-insert "\C-p":dynamic-complete-history
-
-# ^n cycle through the list of partial matches
-bind -m vi-insert "\C-n":menu-complete       
-# ^l clear screen
-bind -m vi-insert "\C-l":clear-screen
-
-[ -z "$SSH_CLIENT" -a -f $HOME/.ssh-agent ] && . $HOME/.ssh-agent
 
 # --------------------------------------------------------------------------------
 # PROMPT
@@ -390,4 +389,4 @@ test -n "$INTERACTIVE" -a -n "$LOGIN" && {
     uptime
 }
 
-# vim: ts=4 sts=4 shiftwidth=4 expandtab
+# vim: ts=4 sts=4 shiftwidth=4 expandtab fdm=marker

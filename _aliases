@@ -1,6 +1,4 @@
 
-alias vim="gvim -v"
-
 alias keyon="ssh-add -t 12h"
 alias keyoff='ssh-add -D'
 alias keylist='ssh-add -l'

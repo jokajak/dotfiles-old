@@ -1,0 +1,6 @@
+deflogin off
+#hardstatus string '%{= kY}%-Lw%{= KW}%50>%n%f* %t%{= kY}%+Lw%< %{= kG}%-=%D %d %M %Y %c:%s%{-}'
+caption string "%?%F%{= Bk}%? %c:%s %D %d-%m-%Y %{= kB} %t%= %?%F%{= Bk}%:%{= wk}%? %n "
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c:%s %{g}]'
+
