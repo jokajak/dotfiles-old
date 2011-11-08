@@ -9,7 +9,7 @@ fi
 # complete hostnames from known hosts
 : ${HOSTFILE=~/.ssh/known_hosts}
 
-if [ -d /cgroup -a -d /cgroup/cpu ]; then
+if [ -d /cgroup -a -d /cgroup/cpu -a ! -d /cgroup/cpu/user/$$ ]; then
     mkdir -m 0700 /cgroup/cpu/user/$$
     echo $$ > /cgroup/cpu/user/$$/tasks
 fi
@@ -41,7 +41,7 @@ bind -m vi-insert "\C-n":menu-complete
 # ^l clear screen
 bind -m vi-insert "\C-l":clear-screen
 
-[ -z "$SSH_CLIENT" -a -f $HOME/.ssh-agent ] && . $HOME/.ssh-agent
+[ -z "$SSH_CLIENT" -a -f $HOME/.ssh-agent -a -z "$DISPLAY" ] && . $HOME/.ssh-agent || :
 
 # correct minor mispellings in directory names when cd'ing
 shopt -s cdspell >/dev/null 2>&1
