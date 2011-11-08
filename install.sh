@@ -58,6 +58,7 @@ PWD=$(pwd)
 DOTFILES="
 _aliases
 _bashrc
+_screenrc
 _shell-fu.bashrc
 _vimrc
 "
