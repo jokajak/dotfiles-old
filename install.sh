@@ -61,6 +61,7 @@ _bashrc
 _screenrc
 _shell-fu.bashrc
 _vimrc
+_z.sh
 "
 for DOTFILE in $(echo "$DOTFILES")
 do

@@ -395,3 +395,7 @@ HISTIGNORE="[ \t]*:ls:history"
 if [ -e ~/.bashrc_generated ]; then
     source ~/.bashrc_generated
 fi
+
+export _Z_DATA=$HOME/config/z
+export _Z_NO_RESOLVE_SYMLINKS='true'
+. $HOME/.z.sh
