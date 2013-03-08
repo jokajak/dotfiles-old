@@ -487,3 +487,12 @@ map <F1> <Nop>
 
 " To start a dockbook easier
 imap ,dtx <?xml version="1.0"?><CR><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+
+" enable zenburn colors
+colors zenburn
+
+" Support for vim modeline in git config.
+let git_config_modeline = system("git config --get vim.modeline")
+if strlen(git_config_modeline)
+    exe "set" git_config_modeline
+endif
